@@ -1,6 +1,6 @@
 {
   "name": "common-angular",
-  "version": "v0.0.2",
+  "version": "v0.0.3",
   "description": "Basic common package",
   "main": "nx-common.service.js",
   "authors": [
