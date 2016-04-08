@@ -1,0 +1,17 @@
+{
+  "name": "common-angular",
+  "description": "Basic common package",
+  "main": "nx-common.service.js",
+  "authors": [
+    "Daniel dos Santos <dsantos@wpsnetwork.com>"
+  ],
+  "license": "ISC",
+  "keywords": [
+    "NxCommon"
+  ],
+  "moduleType": [
+    "globals",
+    "node"
+  ],
+  "homepage": ""
+}
