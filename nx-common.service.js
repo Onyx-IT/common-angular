@@ -12,10 +12,11 @@
     angular
         .module('onyxCommon')
         .service('NxCommon', [
-            function ($http, appConfig) {
+            function ($http, $window, appConfig) {
 
                 var service = {
                     isNumeric: function (n) {
+                        $window.alert(n);
                         return !isNaN(parseFloat(n)) && isFinite(n);
                     },
 
