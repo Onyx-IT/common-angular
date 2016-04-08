@@ -2,77 +2,74 @@
     'use strict';
 
     angular
-        .module('onyxCommon', []);
-})();
+        .module('onyxCommon',[])
+        .factory('NxCommon', NxCommon);
 
+    /** @ngInject */
+    function NxCommon($http, appConfig) { // jshint ignore:line
+        var service = {};
 
-(function () {
-    'use strict';
+        service.isNumeric = function (n) {
+            return !isNaN(parseFloat(n)) && isFinite(n);
+        };
 
-    angular
-        .module('onyxCommon')
-        .service('NxCommon', [
-            function ($http, $window, appConfig) {
+        service.isFormValid = function (formStatus) {
+            var isValid = true;
 
-                var service = {
-                    isNumeric: function (n) {
-                        $window.alert(n);
-                        return !isNaN(parseFloat(n)) && isFinite(n);
-                    },
+            angular.forEach(formStatus, function (error) {
+                if (error) {
+                    isValid = false;
+                }
+            });
+            return isValid;
+        };
 
-                    isFormValid: function (formStatus) {
-                        var isValid = true;
+        service.getAuthToken = function () {
+            //TODO: check for different storage including header, browser session and cookies
+            var token = $http.defaults.headers.common.Authorization;
+            return token;
+        };
 
-                        angular.forEach(formStatus, function (error) {
-                            if (error) {
-                                isValid = false;
-                            }
-                        });
-                        return isValid;
-                    },
+        service.setAuthToken = function () {
+            appConfig.TOKEN = service.getAuthToken();
+            if (!appConfig.TOKEN){
+                return false;
+            } else {
+                return true;
+            }
 
-                    getAuthToken: function () {
-                        //TODO: check for different storage including header, browser session and cookies
-                        var token = $http.defaults.headers.common['Authorization'];
-                        return token;
-                    },
+        };
 
-                    setAuthToken: function () {
-                        appConfig.TOKEN = service.getAuthToken();
-                        if (!appConfig.TOKEN) {
-                            return false;
-                        } else {
-                            return true;
-                        }
+        // Validates that the input string is a valid date formatted as "mm/dd/yyyy"
+        service.isValidDate = function(dateString) {
+            // First check for the pattern
+            if(!/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(dateString))
+                return false;
 
-                    },
+            // Parse the date parts to integers
+            var parts = dateString.split("/");
+            var day = parseInt(parts[1], 10);
+            var month = parseInt(parts[0], 10);
+            var year = parseInt(parts[2], 10);
 
-                    isValidDate: function (dateString) {
-                        // First check for the pattern
-                        if (!/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(dateString))
-                            return false;
+            // Check the ranges of month and year
+            if(year < 1000 || year > 3000 || month === 0 || month > 12)
+                return false;
 
-                        // Parse the date parts to integers
-                        var parts = dateString.split("/");
-                        var day = parseInt(parts[1], 10);
-                        var month = parseInt(parts[0], 10);
-                        var year = parseInt(parts[2], 10);
+            var monthLength = [ 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 ];
 
-                        // Check the ranges of month and year
-                        if (year < 1000 || year > 3000 || month == 0 || month > 12)
-                            return false;
+            // Adjust for leap years
+            if(year % 400 === 0 || (year % 100 !== 0 && year % 4 === 0))
+                monthLength[1] = 29;
 
-                        var monthLength = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+            // Check the range of the day
+            return day > 0 && day <= monthLength[month - 1];
+        };
 
-                        // Adjust for leap years
-                        if (year % 400 == 0 || (year % 100 != 0 && year % 4 == 0))
-                            monthLength[1] = 29;
+        service.init = function () {
 
-                        // Check the range of the day
-                        return day > 0 && day <= monthLength[month - 1];
-                    }
-                };
+        };
 
-                return service;
-            }])
+        return service;
+    }
 })();
